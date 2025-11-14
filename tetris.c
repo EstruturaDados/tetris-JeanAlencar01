@@ -67,7 +67,40 @@ void inserirPeca(Fila* fila) {
 }
 
 int main() {
-
+    srand(time(NULL));
+    Fila fila;
+    inicializarFila(&fila);
+    int opcao;
+    do {
+        printf("Menu:\n");
+        printf("1 Exibir fila\n");
+        printf("2 Jogar peça\n");
+        printf("3 Inserir peça\n");
+        printf("0 Sair\n");
+        scanf("%d", &opcao);
+        switch (opcao) {
+            case 1:
+                exibirFila(&fila);
+                break;
+            case 2:
+                jogarPeca(&fila);
+                exibirFila(&fila);
+                break;
+            case 3:
+                inserirPeca(&fila);
+                exibirFila(&fila);
+                break;
+            case 0:
+                printf("Saindo...\n");
+                break;
+            default:
+                printf("Opcao invalida!\n");
+                break;
+        }
+    } while (opcao != 0);
+    return 0;
+}
+        
     // 🧩 Nível Novato: Fila de Peças Futuras
     //
     // - Crie uma struct Peca com os campos: tipo (char) e id (int).
@@ -112,6 +145,6 @@ int main() {
     //      5 - Trocar 3 primeiros da fila com os 3 da pilha
 
 
-    return 0;
-}
+
+    
 
