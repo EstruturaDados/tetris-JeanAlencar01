@@ -1,9 +1,70 @@
 #include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
 
 // Desafio Tetris Stack
 // Tema 3 - Integração de Fila e Pilha
 // Este código inicial serve como base para o desenvolvimento do sistema de controle de peças.
 // Use as instruções de cada nível para desenvolver o desafio.
+
+typedef struct {
+    char nome;
+    int id;
+} Peca;
+
+typedef struct {
+    Peca pecas[5];
+    int inicio, fim, tamanho;
+} Fila;
+
+Peca gerarPeca(int id) {
+    Peca p;
+    char nomes[] = {'I', 'O', 'T', 'L', 'J', 'S', 'Z'};
+    p.nome = nomes[rand() % 7];
+    p.id = id;
+    return p;
+}
+
+void inicializarFila(Fila* fila) {
+    fila->inicio = 0;
+    fila->fim = 0;
+    fila->tamanho = 0;
+    for (int i = 0; i < 5; i++) {
+        fila->pecas[i] = gerarPeca(i);
+        fila->tamanho++;
+    }
+    fila->fim = fila->tamanho - 1;
+}
+
+void exibirFila(Fila* fila) {
+    printf("Fila atual:\n");
+    for (int i = fila->inicio; i != (fila->fim + 1) % 5; i = (i + 1) % 5) {
+        printf("Peca %d: %c\n", fila->pecas[i].id, fila->pecas[i].nome);
+    }
+}
+
+void jogarPeca(Fila* fila) {
+    if (fila->tamanho > 0) {
+        printf("Peca %d jogada: %c\n", fila->pecas[fila->inicio].id, fila->pecas[fila->inicio].nome);
+        fila->inicio = (fila->inicio + 1) % 5;
+        fila->tamanho--;
+        fila->pecas[fila->fim].id = fila->pecas[(fila->fim + 1) % 5].id + 1;
+        fila->pecas[fila->fim] = gerarPeca(fila->pecas[fila->fim].id);
+    } else {
+        printf("Fila vazia!\n");
+    }
+}
+
+void inserirPeca(Fila* fila) {
+    if (fila->tamanho < 5) {
+        fila->pecas[fila->fim].id = fila->pecas[(fila->fim + 1) % 5].id + 1;
+        fila->pecas[fila->fim] = gerarPeca(fila->pecas[fila->fim].id);
+        fila->fim = (fila->fim + 1) % 5;
+        fila->tamanho++;
+    } else {
+        printf("Fila cheia!\n");
+    }
+}
 
 int main() {
 
