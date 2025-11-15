@@ -17,6 +17,11 @@ typedef struct {
     int inicio, fim, tamanho;
 } Fila;
 
+typedef struct {
+    Peca pecas[3];
+    int topo;
+} Pilha;
+
 Peca gerarPeca(int id) {
     Peca p;
     char nomes[] = {'I', 'O', 'T', 'L', 'J', 'S', 'Z'};
@@ -24,6 +29,48 @@ Peca gerarPeca(int id) {
     p.id = id;
     return p;
 }
+
+void inicializarPilha(Pilha* pilha) {
+    pilha->topo = -1;
+}
+
+int pilhaVazia(Pilha* pilha) {
+    return pilha->topo == -1;
+}
+
+int pilhaCheia(Pilha* pilha) {
+    return pilha->topo == 2;
+}
+
+void push(Pilha* pilha, Peca peca) {
+    if (!pilhaCheia(pilha)) {
+        pilha->topo++;
+        pilha->pecas[pilha->topo] = peca;
+    } else {
+        printf("Pilha cheia!\n");
+    }
+}
+
+Peca pop(Pilha* pilha) {
+    Peca peca;
+    if (!pilhaVazia(pilha)) {
+        peca = pilha->pecas[pilha->topo];
+        pilha->topo--;
+        return peca;
+    } else {
+        printf("Pilha vazia!\n");
+        return peca; 
+    }
+}
+
+void exibirPilha(Pilha* pilha) {
+    printf("Pilha atual:\n");
+    for (int i = pilha->topo; i >= 0; i--) {
+        printf("Peca %d: %c\n", pilha->pecas[i].id, pilha->pecas[i].nome);
+    }
+}
+
+
 
 void inicializarFila(Fila* fila) {
     fila->inicio = 0;
@@ -68,34 +115,63 @@ void inserirPeca(Fila* fila) {
 
 int main() {
     srand(time(NULL));
-    Fila fila;
+     Fila fila;
+    Pilha pilha;
     inicializarFila(&fila);
+    inicializarPilha(&pilha);
     int opcao;
     do {
         printf("Menu:\n");
         printf("1 Exibir fila\n");
         printf("2 Jogar peça\n");
-        printf("3 Inserir peça\n");
+        printf("3 Reservar peça\n");
+        printf("4 Usar peça reservada\n");
+        printf("5 Inserir peça\n");
         printf("0 Sair\n");
         scanf("%d", &opcao);
         switch (opcao) {
             case 1:
                 exibirFila(&fila);
+                exibirPilha(&pilha);
                 break;
             case 2:
                 jogarPeca(&fila);
                 exibirFila(&fila);
+                exibirPilha(&pilha);
                 break;
             case 3:
+                if (!pilhaCheia(&pilha) && fila.tamanho > 0) {
+                    Peca peca = fila.pecas[fila.inicio];
+                    push(&pilha, peca);
+                    jogarPeca(&fila);
+                    printf("Peça reservada com sucesso!\n");
+                } else {
+                    printf("Não é possível reservar a peça!\n");
+                }
+                exibirFila(&fila);
+                exibirPilha(&pilha);
+                break;
+            case 4:
+                if (!pilhaVazia(&pilha)) {
+                    Peca peca = pop(&pilha);
+                    printf("Peça %d usada: %c\n", peca.id, peca.nome);
+                    inserirPeca(&fila);
+                } else {
+                    printf("Pilha vazia!\n");
+                }
+                exibirFila(&fila);
+                exibirPilha(&pilha);
+                break;
+            case 5:
                 inserirPeca(&fila);
                 exibirFila(&fila);
+                exibirPilha(&pilha);
                 break;
             case 0:
                 printf("Saindo...\n");
                 break;
             default:
                 printf("Opcao invalida!\n");
-                break;
         }
     } while (opcao != 0);
     return 0;
